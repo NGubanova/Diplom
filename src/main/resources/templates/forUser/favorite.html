@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Избранное</title>
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" rel="stylesheet">
+    <div style="position: sticky; top:0; z-index: 3"
+         th:insert="fragment/header :: header"></div>
+</head>
+
+<style>
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(5, 320px);
+        grid-template-rows: repeat(5, auto);
+    }
+
+    .grid > * {
+        margin: 1px;
+    }
+
+    a {
+        text-decoration: none
+    }
+</style>
+
+<body class="text-bg-light">
+<main class="col-md-11 mx-auto">
+    <h1 class="text-center">Избранное</h1>
+    <div class="grid">
+        <div th:each="el : ${products}">
+            <div class="feature col fs-5 fw-light">
+                <a th:href="'/profile/favorite/'+${el.id}">
+                    <img height="15"
+                         src="/img/close.svg" width="15">
+                </a>
+                <a class="link-dark fw-normal" th:href="'/catalog/'+${el.id}">
+                    <img alt="image" class="img-thumbnail modal-dialog modal-sm rounded-4"
+                         th:src="${el.image}">
+
+                    <p th:text="${el.name}"></p>
+                    <p class="border-bottom border-second"
+                       th:text="'Материал: '+${el.getMaterial().getName()}"></p>
+                    <p class="col fw-bold fs-4" th:text="${el.price}+' P'"></p>
+                </a>
+                <a class="btn btn-dark" id="btn" th:href="'/catalog/'+${el.id}+'/addFavorite'">
+                    В корзину</a> <br/>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+<div class="text-center fixed-bottom" th:insert="fragment/footer :: footer"></div>
+</html>

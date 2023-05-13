@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <div th:insert="fragment/header :: header"></div>
+</head>
+
+<style>
+    .grid > * {
+        margin: 1px;
+    }
+
+    a {
+        text-decoration: none
+    }
+</style>
+
+<body class=" text-center text-bg-light">
+<main class="col-md-7 mx-auto pt-5">
+    <div th:each="el : ${user}"
+         class="row rounded-4 border border-dark text-start p-5">
+        <div class="row justify-content-between">
+            <a th:href="'/profile/edit/'+${el.id}" class="col-4 link-dark">
+                <h4 th:text="${el.name}"></h4>
+            </a>
+            <a th:href="'/profile/favorite'" class="col-4 text-end">
+                <img src="img/heart.svg" width="45" height="45">
+            </a>
+        </div>
+        <p th:text="'Почта: '+${el.username}" class="lh-1 fs-4 text-secondary ps-2"></p>
+        <p th:text="'Номер телефона: '+${el.phone}" class="lh-1 fs-4 text-secondary ps-2"></p>
+        <div th:each="e:${order}">
+            <a th:href="'profile/order/'+${e.volotid}">
+                <p th:text="'Номер заказа: '+${e.volotid}" class="fw-bold lh-1 fs-4 text-secondary ps-2"></p>
+                <p th:text="'Статус: '+${e.status.getName()}" class="lh-1 fs-4 text-secondary ps-2"></p>
+            </a>
+        </div>
+    </div>
+</main>
+</body>
+<div class="text-center fixed-bottom" th:insert="fragment/footer :: footer"></div>
+</html>
