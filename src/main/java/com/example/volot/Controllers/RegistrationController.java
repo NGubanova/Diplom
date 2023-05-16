@@ -28,7 +28,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public String reg(@Valid User user, Model model, BindingResult result) {
+    public String reg(@Valid User user, BindingResult result, Model model) {
 
         if (result.hasErrors())
             return ("forAll/registration");

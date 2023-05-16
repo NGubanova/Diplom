@@ -24,15 +24,6 @@ public class Order {
     private Status status;
 
     private String Contract;
-    private Integer Amount;
-
-    public Integer getAmount() {
-        return Amount;
-    }
-
-    public void setAmount(Integer amount) {
-        Amount = amount;
-    }
 
     public Order() {
     }

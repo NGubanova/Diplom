@@ -4,10 +4,7 @@ import com.example.volot.Models.Feedback;
 import com.example.volot.Models.Order;
 import com.example.volot.Models.Product;
 import com.example.volot.Models.User;
-import com.example.volot.Repository.FeedbackRepository;
-import com.example.volot.Repository.OrderRepository;
-import com.example.volot.Repository.ProductRepository;
-import com.example.volot.Repository.UserRepository;
+import com.example.volot.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -30,6 +27,8 @@ public class ForUserController {
     ProductRepository productRepository;
     @Autowired
     FeedbackRepository feedbackRepository;
+    @Autowired
+    StatusRepository statusRepository;
     Methods methods = new Methods();
 
     @GetMapping("")
@@ -89,8 +88,7 @@ public class ForUserController {
     }
 
     @GetMapping("/order/{Volotid}")
-    public String OrderPage(Feedback feedback, Model model,
-                            @PathVariable String Volotid) {
+    public String OrderPage(Feedback feedback, Model model, @PathVariable String Volotid) {
         methods.checkAuth(userRepository);
 
         Order orders = orderRepository.getFirstByVolotid(Volotid);
@@ -102,8 +100,7 @@ public class ForUserController {
     }
 
     @PostMapping("/order/{Volotid}")
-    public String addFeedback(Feedback feedback, @RequestParam Long product, Model model,
-                              @PathVariable String Volotid) {
+    public String addFeedback(Feedback feedback, @RequestParam Long product, Model model, @PathVariable String Volotid) {
 
         Order orders = orderRepository.getFirstByVolotid(Volotid);
         model.addAttribute("orders", orders);
@@ -114,6 +111,24 @@ public class ForUserController {
         feedback.setUser(methods.checkAuth(userRepository));
         feedback.setProduct(productRepository.findById(product).orElseThrow());
         feedbackRepository.save(feedback);
+        return "/forUser/detailOrder";
+    }
+
+    @PostMapping("/order/{Volotid}/cancel")
+    public String cancelOrder(Feedback feedback, Model model, @PathVariable String Volotid) {
+
+        Order orderMain = orderRepository.getFirstByVolotid(Volotid);
+        model.addAttribute("orders", orderMain);
+
+        Iterable<Order> listProduct = orderRepository.findByVolotid(Volotid);
+        model.addAttribute("product", listProduct);
+
+        for (Order order : listProduct) {
+            order.setContract("Отменен");
+            order.setStatus(statusRepository.findById(6L).orElseThrow());
+            orderRepository.save(order);
+        }
+
         return "/forUser/detailOrder";
     }
 

@@ -18,7 +18,7 @@
     <form action="/registration" method="post" th:object="${user}">
         <div class="form-floating">
             <input class="h-150 d-inline-block fw-light form-control border-dark border-3" id="name"
-                   placeholder="Имя Фамилия" th:field="*{name}"
+                   th:field="*{name}"
                    type="text">
             <label class="fw-light" for="name">Имя Фамилия</label>
             <div class="form-text text-start" th:errors="*{name}" th:if="${#fields.hasErrors('name')}"></div>
@@ -27,7 +27,7 @@
 
         <div class="form-floating">
             <input class="h-150 d-inline-block fw-light form-control border-dark border-3" id="username"
-                   placeholder="username@domain.com" th:field="*{username}"
+                   th:field="*{username}"
                    type="text">
             <label class="fw-light" for="username">Эл. Почта</label>
             <div class="form-text text-start" th:errors="*{username}" th:if="${#fields.hasErrors('username')}"></div>
@@ -36,7 +36,7 @@
 
         <div class="form-floating">
             <input class="h-150 d-inline-block fw-light form-control border-dark border-3" id="phone"
-                   placeholder="Номер телефона" th:field="*{phone}"
+                   th:field="*{phone}"
                    type="tel">
             <label class="fw-light" for="phone">Номер телефона</label>
             <div class="form-text text-start" th:errors="*{phone}" th:if="${#fields.hasErrors('phone')}"></div>
@@ -45,7 +45,7 @@
 
         <div class="form-floating">
             <input class="h-150 d-inline-block fw-light form-control border-dark border-3" id="password"
-                   placeholder="Пароль" th:field="*{password}"
+                   th:field="*{password}"
                    type="password">
             <label class="fw-light" for="password">Пароль</label>
             <div class="form-text text-start" th:errors="*{password}" th:if="${#fields.hasErrors('password')}"></div>
@@ -63,7 +63,6 @@
     </form>
 </main>
 </body>
-<div style="position: fixed; bottom:0; left: 0; right: 0;" th:insert="fragment/footer :: footer"></div>
 </html>
 
 <script>

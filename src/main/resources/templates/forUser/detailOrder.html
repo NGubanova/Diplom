@@ -81,10 +81,12 @@
                     src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
         </div>
         </br>
-        <form action="/cancel" method="post">
-            <input id="btn-hidden" class="btn btn-dark" type="submit"
-                   value="Отменить"/>
-        </form>
+        <div th:each="o : ${orders}">
+            <form th:action="'/profile/order/'+${o.volotid}+'/cancel'" method="post">
+                <input id="btn-hidden" class="btn btn-dark" type="submit"
+                       value="Отменить"/>
+            </form>
+        </div>
 
         <script>
             var myParagraph = document.getElementById("contract");
@@ -100,5 +102,4 @@
     </div>
 </main>
 </body>
-<div class="text-center fixed-bottom" th:insert="fragment/footer :: footer"></div>
 </html>

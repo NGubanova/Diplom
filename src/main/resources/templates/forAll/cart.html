@@ -48,6 +48,8 @@
             </div>
         </div>
 
+        <div class="form-text" th:if="${error}"></div>
+        <p class="form-text" th:text="${error}"></p>
         <div class="row" id="cart">
             <div class="col align-items-end fs-4 justify-content-end" style="width: 600px">
                 <form action="/cart" method="post" th:object="${order}">
@@ -88,5 +90,4 @@
     </div>
 </main>
 </body>
-<div style="position: fixed; bottom:0; left: 0; right: 0;" th:insert="fragment/footer :: footer"></div>
 </html>

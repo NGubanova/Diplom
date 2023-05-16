@@ -1,10 +1,13 @@
 package com.example.volot.Controllers;
 
-import com.example.volot.Models.*;
+import com.example.volot.Models.Feedback;
+import com.example.volot.Models.Order;
+import com.example.volot.Models.Product;
+import com.example.volot.Models.User;
 import com.example.volot.Repository.*;
 import com.example.volot.Service.HardService;
+import com.example.volot.Service.MailSender;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
@@ -40,8 +44,8 @@ public class MainController {
     @Autowired
     FeedbackRepository feedbackRepository;
 
-    //    @Autowired
-//    MailSender mailSender;
+    @Autowired
+    MailSender mailSender;
     private final HardService hardService;
 
     List ListId = new ArrayList<Long>();
@@ -102,7 +106,7 @@ public class MainController {
 
     @GetMapping("/catalog/subfilter")
     public String FilterSub(@RequestParam Long subcategories,
-                         Model model) {
+                            Model model) {
         model.addAttribute("categories", methods.listCategory(categoryRepository));
         model.addAttribute("subcategories", subcategoryRepository.findByCategoryId(1L));
         List<Product> products = productRepository.findProductsBySubcategoryIdAndStatusTrue(subcategories);
@@ -150,7 +154,7 @@ public class MainController {
 
     @GetMapping("catalog/{id}/addFavorite")
     public String addFavorite(Product product, Model model, HttpServletRequest request,
-                                 @PathVariable long id) {
+                              @PathVariable long id) {
         User user = methods.checkAuth(userRepository);
         ListId.add(id);
         if (ListId.size() == 1) {
@@ -158,7 +162,7 @@ public class MainController {
             request.setAttribute("listId", ListId);
         } else
 //            hardService.update(ListId);
-        request.setAttribute("listId", ListId);
+            request.setAttribute("listId", ListId);
         product = productRepository.findById(id).orElseThrow();
         model.addAttribute("product", product);
         return ("redirect:/profile/favorite");
@@ -189,10 +193,18 @@ public class MainController {
         User user = methods.checkAuth(userRepository);
         if (user == null) {
             return "redirect:/login";
+        }else if (order.getAddress().equals("")){
+            model.addAttribute("error", "Введите адрес доставки");
+            return "/forAll/cart";
         }
+
         Iterable<Product> listProduct = hardService.set();
         model.addAttribute("listProduct", listProduct);
 
+        if (listProduct == null){
+            model.addAttribute("error", "Вы не добавили товар в корзину");
+            return "/forAll/cart";
+        }
         if (result.hasErrors())
             return ("forAll/cart");
 
@@ -216,20 +228,19 @@ public class MainController {
             orderRepository.save(orderMain);
         }
 
-//        List<Product> a = iterableToList(listProduct);
-//        String order = a.stream()
-//                .map(n-> String.valueOf(n.getName()))
-//                .collect(Collectors.joining("\n"));
-//
-//        String message = String.format(
-//                "Новый заказ \nВ него входят:\n"+order
-//                        +"\n\nИмя пользователя: "+user.getName()
-//                        +"\nНомер телефона: "+user.getPhone()
-//                        +"\nПочта: "+user.getUsername()
-//                        +"\nАдрес: "+user.getAddress()
-//        );
-//
-//        mailSender.send("loshadka.3@yandex.ru", "Новый заказ",message);
+        List<Product> a = iterableToList(listProduct);
+        String orders = a.stream()
+                .map(n -> String.valueOf(n.getName()))
+                .collect(Collectors.joining("\n"));
+
+        String message = String.format(
+                "Добрый день, "+user.getName()+"! \nВы оставли заявку на заказ на сайте Волоть" +
+                        "\nТовары в заказе:\n" + orders
+                        + "\n\nВ течение трех дней с вами свяжутся наши менеджеры для уточнения заказа и оформления договора."
+                        + "\nЗаказ будет доставлен по адресу: " + order.getAddress()
+        );
+
+        mailSender.send(user.getUsername(), "Волоть. Новый заказ", message);
 
         hardService.evict();
         listProduct = null;
