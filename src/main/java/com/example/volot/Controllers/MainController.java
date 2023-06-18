@@ -27,6 +27,9 @@ import java.util.stream.Collectors;
 @Controller
 public class MainController {
 
+    List ListId = new ArrayList<Long>();
+
+    Methods methods = new Methods();
     @Autowired
     ProductRepository productRepository;
 
@@ -47,12 +50,6 @@ public class MainController {
     @Autowired
     MailSender mailSender;
     private final HardService hardService;
-
-    List ListId = new ArrayList<Long>();
-
-    List ListAmount = new ArrayList<>();
-
-    Methods methods = new Methods();
 
     public MainController(HardService hardService) {
         this.hardService = hardService;
@@ -99,7 +96,7 @@ public class MainController {
                          Model model) {
         model.addAttribute("categories", methods.listCategory(categoryRepository));
         model.addAttribute("subcategories", subcategoryRepository.findByCategoryName(categories));
-        List<Product> products = productRepository.findBySubcategoryNameAndStatusTrue(categories);
+        List<Product> products = productRepository.findBySubcategoryCategoryNameAndStatusTrue(categories);
         model.addAttribute("product", products);
         return "forAll/catalog";
     }
